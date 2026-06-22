@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventCo CRM – Présentation du projet</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f40;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --text: #e8eaf0;
+    --muted: #7a8099;
+    --tag-blue: #1e3a5f;
+    --tag-blue-text: #60b4ff;
+    --tag-green: #1a3d2e;
+    --tag-green-text: #4ade80;
+    --tag-orange: #3d2a1a;
+    --tag-orange-text: #fb923c;
+    --tag-purple: #2a1a3d;
+    --tag-purple-text: #c084fc;
+    --tag-pink: #3d1a2a;
+    --tag-pink-text: #f472b6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 32px; height: 56px;
+  }
+  .nav-logo { font-weight: 700; font-size: 18px; color: var(--accent); margin-right: auto; }
+  .nav-logo span { color: var(--text); }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 13px;
+    padding: 6px 12px; border-radius: 6px; transition: all .2s;
+    cursor: pointer;
+  }
+  nav a:hover, nav a.active { color: var(--text); background: var(--surface2); }
+
+  /* HERO */
+  .hero {
+    position: relative; overflow: hidden;
+    padding: 96px 32px 80px;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.18) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(108,99,255,.15); border: 1px solid rgba(108,99,255,.3);
+    color: #a5a0ff; font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 100px; margin-bottom: 24px;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, #a5a0ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+  }
+  .hero p {
+    max-width: 580px; margin: 0 auto 40px;
+    color: var(--muted); font-size: 17px;
+  }
+  .kpis {
+    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 32px; min-width: 140px;
+  }
+  .kpi-value { font-size: 32px; font-weight: 800; color: var(--accent); }
+  .kpi-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* SECTIONS */
+  section { padding: 64px 32px; max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--accent); margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 32px; font-weight: 800; margin-bottom: 12px;
+  }
+  .section-desc { color: var(--muted); font-size: 15px; margin-bottom: 40px; max-width: 600px; }
+
+  /* SCHEMA */
+  .schema-wrap { overflow-x: auto; }
+  .schema {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    min-width: 800px;
+  }
+  .schema-col {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .schema-col.span2 { grid-column: span 2; }
+  .schema-header {
+    padding: 12px 16px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; display: flex; align-items: center; gap: 8px;
+  }
+  .schema-header .icon { font-size: 16px; }
+  .schema-field {
+    padding: 7px 16px;
+    font-size: 12px; color: var(--muted);
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px;
+  }
+  .schema-field .name { color: var(--text); }
+  .field-type {
+    font-size: 10px; padding: 2px 6px; border-radius: 4px;
+    background: var(--surface2); color: var(--muted);
+    white-space: nowrap;
+  }
+  .field-type.link { background: rgba(108,99,255,.2); color: #a5a0ff; }
+  .field-type.ai { background: rgba(0,212,170,.15); color: var(--accent2); }
+  .field-type.formula { background: rgba(255,217,61,.1); color: var(--accent4); }
+
+  /* TABLE COLORS */
+  .t-entreprises .schema-header { background: rgba(108,99,255,.15); color: #a5a0ff; }
+  .t-contacts .schema-header { background: rgba(0,212,170,.15); color: var(--accent2); }
+  .t-opportunites .schema-header { background: rgba(255,107,107,.15); color: #ff6b6b; }
+  .t-evenements .schema-header { background: rgba(255,217,61,.1); color: var(--accent4); }
+  .t-prestataires .schema-header { background: rgba(244,114,182,.15); color: #f472b6; }
+  .t-depenses .schema-header { background: rgba(251,146,60,.15); color: #fb923c; }
+  .t-taches .schema-header { background: rgba(96,180,255,.15); color: #60b4ff; }
+
+  /* RELATION DIAGRAM */
+  .relation-diagram { margin-top: 40px; }
+  .rel-flow {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .rel-block {
+    flex: 1; padding: 20px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+  }
+  .rel-block:last-child { border-right: none; }
+  .rel-block h4 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .rel-item {
+    font-size: 11px; color: var(--muted);
+    padding: 4px 0; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .rel-item:last-child { border-bottom: none; }
+  .rel-item .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor; flex-shrink: 0;
+  }
+  .rel-arrow {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; color: var(--muted); font-size: 18px;
+    background: var(--surface);
+  }
+
+  /* DATA TABLES */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); font-size: 13px;
+    cursor: pointer; transition: all .2s;
+  }
+  .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .data-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    text-align: left; padding: 10px 16px;
+    background: var(--surface2); color: var(--muted);
+    font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+    font-weight: 600; border-bottom: 1px solid var(--border);
+  }
+  .data-table th:first-child { border-radius: 8px 0 0 0; }
+  .data-table th:last-child { border-radius: 0 8px 0 0; }
+  .data-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface2); }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 100px;
+  }
+  .tag-blue { background: var(--tag-blue); color: var(--tag-blue-text); }
+  .tag-green { background: var(--tag-green); color: var(--tag-green-text); }
+  .tag-orange { background: var(--tag-orange); color: var(--tag-orange-text); }
+  .tag-purple { background: var(--tag-purple); color: var(--tag-purple-text); }
+  .tag-pink { background: var(--tag-pink); color: var(--tag-pink-text); }
+  .tag-gray { background: var(--surface2); color: var(--muted); }
+
+  /* FEATURES */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .feature-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    transition: border-color .2s, transform .2s;
+  }
+  .feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .feature-icon { font-size: 28px; margin-bottom: 12px; }
+  .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { color: var(--muted); font-size: 13px; }
+
+  /* AI SECTION */
+  .ai-section {
+    background: linear-gradient(135deg, rgba(108,99,255,.08) 0%, rgba(0,212,170,.05) 100%);
+    border: 1px solid rgba(108,99,255,.2);
+    border-radius: 20px; padding: 40px;
+  }
+  .ai-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .ai-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(0,212,170,.12); border: 1px solid rgba(0,212,170,.25);
+    color: var(--accent2); font-size: 13px; font-weight: 500;
+    padding: 8px 16px; border-radius: 100px;
+  }
+
+  /* PIPELINE VISUAL */
+  .pipeline {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
+  }
+  .pipeline-stage {
+    flex: 1; min-width: 140px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .pipeline-header {
+    padding: 10px 14px; font-size: 12px; font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  .pipeline-card {
+    margin: 8px; padding: 10px 12px;
+    background: var(--surface2); border-radius: 8px;
+    font-size: 12px;
+  }
+  .pipeline-card .company { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .pipeline-card .amount { font-weight: 700; color: var(--accent2); margin-top: 4px; }
+
+  .pipeline-prospection .pipeline-header { color: var(--muted); }
+  .pipeline-qualification .pipeline-header { color: #60b4ff; }
+  .pipeline-proposition .pipeline-header { color: var(--accent4); }
+  .pipeline-nego .pipeline-header { color: #fb923c; }
+  .pipeline-gagne .pipeline-header { color: var(--tag-green-text); }
+
+  /* BUDGET BAR */
+  .budget-bars { display: flex; flex-direction: column; gap: 12px; }
+  .budget-bar-row { display: flex; align-items: center; gap: 12px; }
+  .budget-bar-label { width: 160px; font-size: 13px; }
+  .budget-bar-track {
+    flex: 1; height: 8px; background: var(--surface2);
+    border-radius: 100px; overflow: hidden;
+  }
+  .budget-bar-fill {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .budget-bar-value { width: 80px; text-align: right; font-size: 13px; font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center; padding: 32px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .schema { grid-template-columns: 1fr; }
+    .kpis { gap: 16px; }
+    .rel-flow { flex-direction: column; }
+    .rel-block { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">EventCo <span>CRM</span></div>
+  <a href="#overview" onclick="scrollTo('overview')">Vue d'ensemble</a>
+  <a href="#schema" onclick="scrollTo('schema')">Structure</a>
+  <a href="#data" onclick="scrollTo('data')">Données</a>
+  <a href="#pipeline" onclick="scrollTo('pipeline')">Pipeline</a>
+  <a href="#ia" onclick="scrollTo('ia')">IA</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="overview">
+  <div class="hero-badge">🎯 CRM sur Airtable</div>
+  <h1>EventCo CRM</h1>
+  <p>Un système de gestion de la relation client conçu pour une agence événementielle — du prospect jusqu'à la facturation, en passant par la production et l'IA.</p>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-value">4</div>
+      <div class="kpi-label">Entreprises clientes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">6</div>
+      <div class="kpi-label">Contacts</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">8</div>
+      <div class="kpi-label">Opportunités</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value">7</div>
+      <div class="kpi-label">Tables reliées</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value" style="color:var(--accent2)">635 k€</div>
+      <div class="kpi-label">Budget clients total</div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-label">Fonctionnalités clés</div>
+  <h2>Ce que couvre le CRM</h2>
+  <p class="section-desc">Un outil complet qui couvre tout le cycle de vie d'une agence événementielle.</p>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🏢</div>
+      <h3>Gestion des clients</h3>
+      <p>Suivi des entreprises clientes avec secteur, taille, budget annuel estimé et commercial attitré.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👤</div>
+      <h3>Contacts & rôles</h3>
+      <p>Contacts segmentés par rôle (Décideur, Opérationnel, Prescripteur) et liés à leur entreprise.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💼</div>
+      <h3>Pipeline commercial</h3>
+      <p>Opportunités avec statut, montant estimé, date de clôture et valeur pondérée calculée.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎪</div>
+      <h3>Gestion d'événements</h3>
+      <p>Chaque événement est lié à une opportunité et peut inclure prestataires, budget et tâches.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <h3>Dépenses & factures</h3>
+      <p>Suivi financier de chaque projet : dépenses, prestataires et factures centralisées.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✅</div>
+      <h3>Tâches de production</h3>
+      <p>Checklist de production par événement pour coordonner l'équipe sur le terrain.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>IA intégrée</h3>
+      <p>Synthèses automatiques, catégorisation et probabilité de succès générées par l'IA sur chaque entité.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <h3>Base 100% reliée</h3>
+      <p>Toutes les tables sont interconnectées avec des champs lookup et rollup pour une vue 360°.</p>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- SCHEMA -->
+<section id="schema">
+  <div class="section-label">Architecture des données</div>
+  <h2>Structure des 7 tables</h2>
+  <p class="section-desc">Chaque table est reliée aux autres pour offrir une vision complète de chaque projet.</p>
+
+  <div class="schema-wrap">
+    <div class="schema">
+
+      <!-- Entreprises -->
+      <div class="schema-col t-entreprises span2">
+        <div class="schema-header"><span class="icon">🏢</span> Entreprises clientes</div>
+        <div class="schema-field"><span class="name">Nom de l'entreprise</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Secteur</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Taille</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Budget annuel estimé</span><span class="field-type">Devise</span></div>
+        <div class="schema-field"><span class="name">Commercial attitré</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Contacts liés</span><span class="field-type link">🔗 Contacts</span></div>
+        <div class="schema-field"><span class="name">Opportunités</span><span class="field-type link">🔗 Opportunités</span></div>
+        <div class="schema-field"><span class="name">Montant total opportunités</span><span class="field-type formula">Σ Rollup</span></div>
+        <div class="schema-field"><span class="name">Synthèse client (AI)</span><span class="field-type ai">🤖 IA</span></div>
+        <div class="schema-field"><span class="name">Catégorie de potentiel (AI)</span><span class="field-type ai">🤖 IA</span></div>
+      </div>
+
+      <!-- Contacts -->
+      <div class="schema-col t-contacts span2">
+        <div class="schema-header"><span class="icon">👤</span> Contacts</div>
+        <div class="schema-field"><span class="name">Nom complet</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Entreprise</span><span class="field-type link">🔗 Entreprises</span></div>
+        <div class="schema-field"><span class="name">Rôle</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Email</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Téléphone</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Entreprise – Secteur</span><span class="field-type formula">Lookup</span></div>
+        <div class="schema-field"><span class="name">Entreprise – Budget</span><span class="field-type formula">Lookup</span></div>
+        <div class="schema-field"><span class="name">Opportunités</span><span class="field-type link">🔗 Opportunités</span></div>
+        <div class="schema-field"><span class="name">Synthèse contact (AI)</span><span class="field-type ai">🤖 IA</span></div>
+        <div class="schema-field"><span class="name">Catégorie contact (AI)</span><span class="field-type ai">🤖 IA</span></div>
+      </div>
+
+      <!-- Opportunités -->
+      <div class="schema-col t-opportunites span2">
+        <div class="schema-header"><span class="icon">💼</span> Opportunités</div>
+        <div class="schema-field"><span class="name">Nom de l'opportunité</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Entreprise cliente</span><span class="field-type link">🔗 Entreprises</span></div>
+        <div class="schema-field"><span class="name">Contact principal</span><span class="field-type link">🔗 Contacts</span></div>
+        <div class="schema-field"><span class="name">Statut</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Montant estimé</span><span class="field-type">Devise</span></div>
+        <div class="schema-field"><span class="name">Date de clôture prévue</span><span class="field-type">Date</span></div>
+        <div class="schema-field"><span class="name">Type d'opportunité</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Jours jusqu'à clôture</span><span class="field-type formula">Formule</span></div>
+        <div class="schema-field"><span class="name">Valeur pondérée</span><span class="field-type formula">Formule</span></div>
+        <div class="schema-field"><span class="name">Résumé opportunité (AI)</span><span class="field-type ai">🤖 IA</span></div>
+        <div class="schema-field"><span class="name">Probabilité de succès (AI)</span><span class="field-type ai">🤖 IA</span></div>
+        <div class="schema-field"><span class="name">Événements</span><span class="field-type link">🔗 Événements</span></div>
+      </div>
+
+      <!-- Événements -->
+      <div class="schema-col t-evenements">
+        <div class="schema-header"><span class="icon">🎪</span> Événements</div>
+        <div class="schema-field"><span class="name">Nom de l'événement</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Opportunité</span><span class="field-type link">🔗 Opport.</span></div>
+        <div class="schema-field"><span class="name">Date</span><span class="field-type">Date</span></div>
+        <div class="schema-field"><span class="name">Lieu</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Prestataires</span><span class="field-type link">🔗 Prest.</span></div>
+        <div class="schema-field"><span class="name">Tâches</span><span class="field-type link">🔗 Tâches</span></div>
+        <div class="schema-field"><span class="name">Dépenses</span><span class="field-type link">🔗 Dép.</span></div>
+      </div>
+
+      <!-- Prestataires -->
+      <div class="schema-col t-prestataires">
+        <div class="schema-header"><span class="icon">🤝</span> Prestataires</div>
+        <div class="schema-field"><span class="name">Nom</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Type</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Contact</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Événements liés</span><span class="field-type link">🔗 Événem.</span></div>
+      </div>
+
+      <!-- Dépenses -->
+      <div class="schema-col t-depenses">
+        <div class="schema-header"><span class="icon">🧾</span> Dépenses / Factures</div>
+        <div class="schema-field"><span class="name">Intitulé</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Montant HT</span><span class="field-type">Devise</span></div>
+        <div class="schema-field"><span class="name">Statut paiement</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Événement</span><span class="field-type link">🔗 Événem.</span></div>
+        <div class="schema-field"><span class="name">Prestataire</span><span class="field-type link">🔗 Prest.</span></div>
+      </div>
+
+      <!-- Tâches -->
+      <div class="schema-col t-taches">
+        <div class="schema-header"><span class="icon">✅</span> Tâches de production</div>
+        <div class="schema-field"><span class="name">Tâche</span><span class="field-type">Texte</span></div>
+        <div class="schema-field"><span class="name">Responsable</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Statut</span><span class="field-type">Sélection</span></div>
+        <div class="schema-field"><span class="name">Échéance</span><span class="field-type">Date</span></div>
+        <div class="schema-field"><span class="name">Événement</span><span class="field-type link">🔗 Événem.</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Relation flow -->
+  <div class="relation-diagram">
+    <div class="rel-flow">
+      <div class="rel-block" style="color:#a5a0ff">
+        <h4>🏢 Entreprises</h4>
+        <div class="rel-item"><div class="dot"></div>4 sociétés</div>
+        <div class="rel-item"><div class="dot"></div>Budgets définis</div>
+        <div class="rel-item"><div class="dot"></div>Commercial assigné</div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-block" style="color:var(--accent2)">
+        <h4>👤 Contacts</h4>
+        <div class="rel-item"><div class="dot"></div>6 contacts</div>
+        <div class="rel-item"><div class="dot"></div>Rôles hiérarchiques</div>
+        <div class="rel-item"><div class="dot"></div>Multi-contact/entreprise</div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-block" style="color:#ff6b6b">
+        <h4>💼 Opportunités</h4>
+        <div class="rel-item"><div class="dot"></div>8 opportunités</div>
+        <div class="rel-item"><div class="dot"></div>Pipeline à 5 stades</div>
+        <div class="rel-item"><div class="dot"></div>Valeur pondérée IA</div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-block" style="color:var(--accent4)">
+        <h4>🎪 Événements</h4>
+        <div class="rel-item"><div class="dot"></div>Liés aux opport.</div>
+        <div class="rel-item"><div class="dot"></div>Production complète</div>
+        <div class="rel-item"><div class="dot"></div>Budget & prestataires</div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-block" style="color:#60b4ff">
+        <h4>⚙️ Production</h4>
+        <div class="rel-item"><div class="dot"></div>Tâches assignées</div>
+        <div class="rel-item"><div class="dot"></div>Prestataires gérés</div>
+        <div class="rel-item"><div class="dot"></div>Factures suivies</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- DATA TABLES -->
+<section id="data">
+  <div class="section-label">Données réelles</div>
+  <h2>Contenu de la base</h2>
+  <p class="section-desc">Les données actuellement enregistrées dans le CRM.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('tab-entreprises')">🏢 Entreprises</button>
+    <button class="tab-btn" onclick="showTab('tab-contacts')">👤 Contacts</button>
+    <button class="tab-btn" onclick="showTab('tab-opportunites')">💼 Opportunités</button>
+  </div>
+
+  <!-- Entreprises -->
+  <div id="tab-entreprises" class="tab-panel active">
+    <div style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Entreprise</th>
+            <th>Secteur</th>
+            <th>Taille</th>
+            <th>Budget estimé</th>
+            <th>Commercial</th>
+            <th>Contacts</th>
+            <th>Événements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Novatech Solutions</strong></td>
+            <td><span class="tag tag-blue">Tech</span></td>
+            <td><span class="tag tag-gray">ETI</span></td>
+            <td style="color:var(--accent2);font-weight:600">120 000 €</td>
+            <td>Alice Martin</td>
+            <td>Sophie M. · Isabelle G.</td>
+            <td>Soirée annuelle Groupe Luminis</td>
+          </tr>
+          <tr>
+            <td><strong>PharmaSphere</strong></td>
+            <td><span class="tag tag-green">Pharma</span></td>
+            <td><span class="tag tag-purple">Grand compte</span></td>
+            <td style="color:var(--accent2);font-weight:600">350 000 €</td>
+            <td>Bruno Dupont</td>
+            <td>Julien L. · Antoine R.</td>
+            <td>Lancement produit PharmaNova</td>
+          </tr>
+          <tr>
+            <td><strong>Luxuria Events</strong></td>
+            <td><span class="tag tag-pink">Luxe</span></td>
+            <td><span class="tag tag-gray">PME</span></td>
+            <td style="color:var(--accent2);font-weight:600">70 000 €</td>
+            <td>Carla Leroy</td>
+            <td>Claire D.</td>
+            <td>Campagne digitale Printemps Tech</td>
+          </tr>
+          <tr>
+            <td><strong>RetailConnect</strong></td>
+            <td><span class="tag tag-orange">Retail</span></td>
+            <td><span class="tag tag-gray">ETI</span></td>
+            <td style="color:var(--accent2);font-weight:600">95 000 €</td>
+            <td>David Morel</td>
+            <td>Marc P.</td>
+            <td>Séminaire réseau RetailPro</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="section-label" style="margin-bottom:12px">Budget par entreprise</div>
+      <div class="budget-bars">
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">PharmaSphere</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" style="width:100%"></div></div>
+          <div class="budget-bar-value">350 000 €</div>
+        </div>
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">Novatech Solutions</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" style="width:34%"></div></div>
+          <div class="budget-bar-value">120 000 €</div>
+        </div>
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">RetailConnect</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" style="width:27%"></div></div>
+          <div class="budget-bar-value">95 000 €</div>
+        </div>
+        <div class="budget-bar-row">
+          <div class="budget-bar-label">Luxuria Events</div>
+          <div class="budget-bar-track"><div class="budget-bar-fill" style="width:20%"></div></div>
+          <div class="budget-bar-value">70 000 €</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div id="tab-contacts" class="tab-panel">
+    <div style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Entreprise</th>
+            <th>Rôle</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sophie Martin</strong></td>
+            <td>Novatech Solutions</td>
+            <td><span class="tag tag-purple">Décideur</span></td>
+            <td style="color:var(--muted);font-size:12px">sophie.martin@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 1 23 45 67 89</td>
+          </tr>
+          <tr>
+            <td><strong>Julien Lefèvre</strong></td>
+            <td>PharmaSphere</td>
+            <td><span class="tag tag-blue">Opérationnel</span></td>
+            <td style="color:var(--muted);font-size:12px">julien.lefevre@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 6 12 34 56 78</td>
+          </tr>
+          <tr>
+            <td><strong>Claire Dubois</strong></td>
+            <td>Luxuria Events</td>
+            <td><span class="tag tag-green">Prescripteur</span></td>
+            <td style="color:var(--muted);font-size:12px">claire.dubois@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 7 98 76 54 32</td>
+          </tr>
+          <tr>
+            <td><strong>Marc Petit</strong></td>
+            <td>RetailConnect</td>
+            <td><span class="tag tag-purple">Décideur</span></td>
+            <td style="color:var(--muted);font-size:12px">marc.petit@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 1 45 67 89 12</td>
+          </tr>
+          <tr>
+            <td><strong>Isabelle Girard</strong></td>
+            <td>Novatech Solutions</td>
+            <td><span class="tag tag-blue">Opérationnel</span></td>
+            <td style="color:var(--muted);font-size:12px">isabelle.girard@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 6 23 45 67 89</td>
+          </tr>
+          <tr>
+            <td><strong>Antoine Rousseau</strong></td>
+            <td>PharmaSphere</td>
+            <td><span class="tag tag-green">Prescripteur</span></td>
+            <td style="color:var(--muted);font-size:12px">antoine.rousseau@…</td>
+            <td style="color:var(--muted);font-size:12px">+33 7 11 22 33 44</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;text-align:center;min-width:120px;">
+        <div style="font-size:24px;font-weight:800;color:var(--accent)">2</div>
+        <div style="font-size:12px;color:var(--muted)">Décideurs</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;text-align:center;min-width:120px;">
+        <div style="font-size:24px;font-weight:800;color:var(--accent2)">2</div>
+        <div style="font-size:12px;color:var(--muted)">Opérationnels</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 24px;text-align:center;min-width:120px;">
+        <div style="font-size:24px;font-weight:800;color:#60b4ff">2</div>
+        <div style="font-size:12px;color:var(--muted)">Prescripteurs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opportunités -->
+  <div id="tab-opportunites" class="tab-panel">
+    <div style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Opportunité</th>
+            <th>Entreprise</th>
+            <th>Montant</th>
+            <th>Type</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Soirée annuelle Groupe Luminis</strong></td>
+            <td>Novatech Solutions</td>
+            <td style="color:var(--accent2);font-weight:600">25 000 €</td>
+            <td><span class="tag tag-blue">Événement</span></td>
+            <td><span class="tag tag-gray">Réseau</span></td>
+          </tr>
+          <tr>
+            <td><strong>Lancement produit PharmaNova</strong></td>
+            <td>PharmaSphere</td>
+            <td style="color:var(--accent2);font-weight:600">18 000 €</td>
+            <td><span class="tag tag-green">Lancement</span></td>
+            <td><span class="tag tag-gray">Inbound</span></td>
+          </tr>
+          <tr>
+            <td><strong>Campagne digitale Printemps Tech</strong></td>
+            <td>Luxuria Events</td>
+            <td style="color:var(--accent2);font-weight:600">12 000 €</td>
+            <td><span class="tag tag-pink">Digital</span></td>
+            <td><span class="tag tag-gray">Référence</span></td>
+          </tr>
+          <tr>
+            <td><strong>Séminaire réseau RetailPro</strong></td>
+            <td>RetailConnect</td>
+            <td style="color:var(--accent2);font-weight:600">22 000 €</td>
+            <td><span class="tag tag-orange">Séminaire</span></td>
+            <td><span class="tag tag-gray">Outbound</span></td>
+          </tr>
+          <tr style="opacity:.6">
+            <td><em>+ 4 autres opportunités</em></td>
+            <td>–</td>
+            <td>–</td>
+            <td>–</td>
+            <td>–</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;color:var(--muted);font-size:13px">
+      💡 Chaque opportunité génère automatiquement un <strong style="color:var(--text)">Jours jusqu'à clôture</strong> et une <strong style="color:var(--text)">Valeur pondérée</strong> via des formules Airtable.
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="section-label">Pipeline commercial</div>
+  <h2>Vue Kanban des opportunités</h2>
+  <p class="section-desc">Les 8 opportunités progressent à travers 5 stades du pipeline.</p>
+
+  <div class="pipeline">
+    <div class="pipeline-stage pipeline-prospection">
+      <div class="pipeline-header">🔍 Prospection</div>
+      <div class="pipeline-card">
+        <div>Contact initial Novatech</div>
+        <div class="company">Novatech Solutions</div>
+        <div class="amount">8 000 €</div>
+      </div>
+    </div>
+    <div class="pipeline-stage pipeline-qualification">
+      <div class="pipeline-header">🎯 Qualification</div>
+      <div class="pipeline-card">
+        <div>Brief PharmaSphere Q3</div>
+        <div class="company">PharmaSphere</div>
+        <div class="amount">15 000 €</div>
+      </div>
+      <div class="pipeline-card">
+        <div>Campagne digitale Printemps Tech</div>
+        <div class="company">Luxuria Events</div>
+        <div class="amount">12 000 €</div>
+      </div>
+    </div>
+    <div class="pipeline-stage pipeline-proposition">
+      <div class="pipeline-header">📄 Proposition</div>
+      <div class="pipeline-card">
+        <div>Lancement produit PharmaNova</div>
+        <div class="company">PharmaSphere</div>
+        <div class="amount">18 000 €</div>
+      </div>
+      <div class="pipeline-card">
+        <div>Séminaire réseau RetailPro</div>
+        <div class="company">RetailConnect</div>
+        <div class="amount">22 000 €</div>
+      </div>
+    </div>
+    <div class="pipeline-stage pipeline-nego">
+      <div class="pipeline-header">🤝 Négociation</div>
+      <div class="pipeline-card">
+        <div>Renouvellement Novatech 2025</div>
+        <div class="company">Novatech Solutions</div>
+        <div class="amount">30 000 €</div>
+      </div>
+    </div>
+    <div class="pipeline-stage pipeline-gagne">
+      <div class="pipeline-header" style="color:var(--tag-green-text)">✅ Gagné</div>
+      <div class="pipeline-card">
+        <div>Soirée annuelle Groupe Luminis</div>
+        <div class="company">Novatech Solutions</div>
+        <div class="amount">25 000 €</div>
+      </div>
+      <div class="pipeline-card">
+        <div>Séminaire annuel RetailConnect</div>
+        <div class="company">RetailConnect</div>
+        <div class="amount">19 000 €</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- IA -->
+<section id="ia">
+  <div class="section-label">Intelligence Artificielle</div>
+  <h2>Fonctionnalités IA intégrées</h2>
+  <p class="section-desc">L'IA est intégrée nativement dans Airtable via des champs "Texte long (agent)" qui génèrent du contenu automatiquement.</p>
+
+  <div class="ai-section">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px">Contact</div>
+        <div style="font-weight:700;margin-bottom:8px">🤖 Synthèse du contact</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Pour chaque contact, l'IA génère un résumé de son profil, de son rôle dans les décisions d'achat et de son historique de relation avec l'agence.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Contact</div>
+        <div style="font-weight:700;margin-bottom:8px">🏷️ Catégorie de contact</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Classification automatique du contact (chaud, tiède, froid) pour prioriser les actions commerciales.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Entreprise</div>
+        <div style="font-weight:700;margin-bottom:8px">🤖 Synthèse client</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Analyse automatique du compte client : potentiel de revenus, maturité événementielle, secteur d'activité.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Entreprise</div>
+        <div style="font-weight:700;margin-bottom:8px">🎯 Catégorie de potentiel</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Note automatique du potentiel commercial de l'entreprise pour concentrer les efforts des équipes.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Opportunité</div>
+        <div style="font-weight:700;margin-bottom:8px">📋 Résumé de l'opportunité</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Synthèse narrative de l'opportunité avec les points clés du brief, les enjeux et les prochaines étapes.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Opportunité</div>
+        <div style="font-weight:700;margin-bottom:8px">📊 Probabilité de succès</div>
+        <div style="color:var(--muted);font-size:13px;line-height:1.7">
+          Score de probabilité généré par l'IA en croisant le profil client, le stade du pipeline et les données historiques.
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ai-chips">
+      <div class="ai-chip">✨ Génération automatique</div>
+      <div class="ai-chip">📌 Contexte enrichi</div>
+      <div class="ai-chip">🔄 Mise à jour dynamique</div>
+      <div class="ai-chip">🧠 Airtable AI Agent</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- RÉSUMÉ -->
+<section>
+  <div class="section-label">En résumé</div>
+  <h2>Ce que permet EventCo CRM</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:8px;">
+    <div>
+      <div style="color:var(--muted);font-size:15px;line-height:1.8">
+        <p style="margin-bottom:12px">EventCo CRM est un outil Airtable conçu pour une agence événementielle qui veut structurer tout son flux commercial et opérationnel dans un seul endroit.</p>
+        <p style="margin-bottom:12px">Il couvre le cycle complet : de la <strong style="color:var(--text)">prospection client</strong> (entreprises et contacts) à la <strong style="color:var(--text)">gestion de production</strong> (tâches, prestataires, factures), en passant par la <strong style="color:var(--text)">conversion commerciale</strong> (pipeline d'opportunités).</p>
+        <p>L'IA intégrée permet de gagner du temps sur l'analyse des données et la priorisation des actions commerciales.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:24px">📈</div>
+        <div>
+          <div style="font-weight:700;font-size:14px">635 000 €</div>
+          <div style="font-size:12px;color:var(--muted)">de budgets clients suivis</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:24px">🔗</div>
+        <div>
+          <div style="font-weight:700;font-size:14px">7 tables interconnectées</div>
+          <div style="font-size:12px;color:var(--muted)">avec lookups et rollups automatiques</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:24px">🤖</div>
+        <div>
+          <div style="font-weight:700;font-size:14px">6 champs IA</div>
+          <div style="font-size:12px;color:var(--muted)">pour synthèses et scoring automatiques</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:24px">🎪</div>
+        <div>
+          <div style="font-weight:700;font-size:14px">Production complète</div>
+          <div style="font-size:12px;color:var(--muted)">tâches, prestataires, dépenses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">EventCo CRM</div>
+  <div>Construit sur Airtable · CRM pour agence événementielle</div>
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Smooth scroll for nav
+  document.querySelectorAll('nav a').forEach(a => {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      const id = this.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Active nav on scroll
+  const sections = ['overview','schema','data','pipeline','ia'];
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 100) current = id;
+    });
+    document.querySelectorAll('nav a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
